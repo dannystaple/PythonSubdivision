@@ -1,4 +1,4 @@
-import sys, pygame
+import sys, pygame, pickle
 
 black = 0, 0, 0
 white = 0xff, 0xff, 0xff
@@ -47,6 +47,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN: self.handle_click_at(pygame.mouse.get_pos())
+                if event.type == pygame.KEYDOWN: self.handle_key(event.key)
             self._update_display()
             
     def _init_screen(self):
@@ -77,6 +78,20 @@ class Game:
         for square in self._squares:
             pygame.draw.rect(self._screen, black, square, 2)
         pygame.display.flip()
+    
+    def handle_key(self, key):
+        """Handle keypresses"""
+        print "Handling key '" + chr(key) + "'" 
+        if chr(key) == 'q':
+            sys.exit()
+        if chr(key) == 'c':
+            self._tree = Tree()
+            self._tree_to_squares()
+        if chr(key) == 's':
+            pickle.dump(self._tree, "test.tree")
+        if chr(key) == 'l':
+            self._tree = pickle.load("test.tree")
+            self._tree_to_squares()
         
     def handle_click_at(self, pos):
         """Given a click at an x,y tuple (pos) it should subdivide the node it landed on"""
