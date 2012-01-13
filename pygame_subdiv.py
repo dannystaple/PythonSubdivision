@@ -88,9 +88,11 @@ class Game:
             self._tree = Tree()
             self._tree_to_squares()
         if chr(key) == 's':
-            pickle.dump(self._tree, "test.tree")
+            with open("test.tree","w") as fp:
+                pickle.dump(self._tree, fp)
         if chr(key) == 'l':
-            self._tree = pickle.load("test.tree")
+            with open("test.tree") as fp:
+                self._tree = pickle.load(fp)
             self._tree_to_squares()
         
     def handle_click_at(self, pos):
