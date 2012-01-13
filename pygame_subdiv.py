@@ -12,7 +12,7 @@ class Node:
     
     def subNodes(self):
         return self._subNodes
-        
+
 class Tree:
     def __init__(self):
         self._root = Node()
@@ -34,6 +34,7 @@ class Game:
     def __init__(self):
         self._tree = None
         self._squares = None
+        # self._renderRoot = None
         self._width, self._height = 800, 800
         
     def run(self):
@@ -41,11 +42,12 @@ class Game:
         self._init_screen()
         test_tree(self._tree.getRoot())
         self._tree_to_squares()
-        
-        self._update_display()
+        # self._tree_to_render_tree()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN: self.handle_click_at(pygame.mouse.get_pos())
+            self._update_display()
             
     def _init_screen(self):
         pygame.init()
@@ -57,7 +59,6 @@ class Game:
         """Convert a tree of nodes to squares.
         Each node will result in 4 subdivisions."""
         def _get_squares_for_node(node, x, y, width, height):
-            squares = [[x, y, width,height]]
             hwidth = width / 2
             hheight = height / 2
             subNodes = node.subNodes()
@@ -73,12 +74,43 @@ class Game:
     def _update_display(self):        
         self._screen.fill(white)
         # render squares from tree
-        # pygame.draw.rect(self._screen, (0xff, 0x00, 0x00), (10, 10, 50, 50), 5)
         for square in self._squares:
-            print "drawing " + repr(square)
             pygame.draw.rect(self._screen, black, square, 2)
         pygame.display.flip()
-    # 
+        
+    def handle_click_at(self, pos):
+        """Given a click at an x,y tuple (pos) it should subdivide the node it landed on"""
+        x,y = pos
+        node = None
+        newNode = self._tree.getRoot()
+        sx = 0
+        sy = 0
+        w = self._width
+        h = self._height
+        while newNode != node and w > 1 and h > 1 and newNode.subNodes():
+            node = newNode
+            w /= 2
+            h /= 2
+            if x < (sx + w):
+                if y < (sy + h):
+                    print "Using first sn"
+                    newNode = node.subNodes()[0]
+                else:
+                    print "Using 3rd sn"
+                    sy += h
+                    newNode = node.subNodes()[2]
+            else:
+                sx += w
+                if y < (sy + h):
+                    print "Using 2nd sn"
+                    newNode = node.subNodes()[1]
+                else:
+                    print "Using 4th sn"
+                    sy += h
+                    newNode = node.subNodes()[3]
+        newNode.subDivide()
+        self._tree_to_squares()
+    
     # def mouse_func(self):
     #     use boundaries to find square that got clicked
     #     subdivide the square (update tree and squares tree)

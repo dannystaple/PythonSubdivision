@@ -14,3 +14,16 @@ g._tree.getRoot().subNodes()[3].subDivide()
 print str(g._tree)
 g._tree_to_squares()
 print repr(g._squares)
+
+
+print "Trying tree to render tree..."
+rt = g._tree_to_render_tree()
+
+def print_rt_node(node, indent_by = 1):
+    indent = "   " * indent_by
+    print indent + "Square " + repr(node.renderObj())
+    if node.subNodes():
+        for subNode in node.subNodes():
+            print_rt_node(subNode, indent_by + 1)
+
+print_rt_node(rt)
