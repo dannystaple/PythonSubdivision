@@ -3,6 +3,7 @@ import sys, pygame, pickle
 black = 0, 0, 0
 white = 0xff, 0xff, 0xff
 
+
 class Node:
     def __init__(self):
         self._subNodes = None
@@ -12,6 +13,9 @@ class Node:
     
     def subNodes(self):
         return self._subNodes
+        
+    def clearSubNodes(self):
+        self._subNodes = None
 
 class Tree:
     def __init__(self):
@@ -32,13 +36,15 @@ def test_tree(root):
     
 class Game:
     def __init__(self):
-        self._tree = None
-        self._squares = None
-        # self._renderRoot = None
+        self._reset()
         self._width, self._height = 800, 800
         
-    def run(self):
+    def _reset(self):
+        self._lastChanged = None
         self._tree = Tree()
+        self._squares = None
+        
+    def run(self):
         self._init_screen()
         test_tree(self._tree.getRoot())
         self._tree_to_squares()
@@ -81,19 +87,25 @@ class Game:
     
     def handle_key(self, key):
         """Handle keypresses"""
+        key = key & 0xff
         print "Handling key '" + chr(key) + "'" 
         if chr(key) == 'q':
             sys.exit()
         if chr(key) == 'c':
-            self._tree = Tree()
+            self._reset()
             self._tree_to_squares()
         if chr(key) == 's':
             with open("test.tree","w") as fp:
                 pickle.dump(self._tree, fp)
         if chr(key) == 'l':
+            self._lastChanged = None
             with open("test.tree") as fp:
                 self._tree = pickle.load(fp)
             self._tree_to_squares()
+        if chr(key) == 'u' and self._lastChanged:
+            self._lastChanged.clearSubNodes()
+            self._tree_to_squares()
+            self._lastChanged = None
         
     def handle_click_at(self, pos):
         """Given a click at an x,y tuple (pos) it should subdivide the node it landed on"""
@@ -126,6 +138,7 @@ class Game:
                     sy += h
                     newNode = node.subNodes()[3]
         newNode.subDivide()
+        self._lastChanged = newNode
         self._tree_to_squares()
     
     # def mouse_func(self):
