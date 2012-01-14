@@ -3,7 +3,6 @@ import sys, pygame, pickle
 black = 0, 0, 0
 white = 0xff, 0xff, 0xff
 
-
 class Node:
     def __init__(self):
         self._subNodes = None
@@ -37,22 +36,23 @@ def test_tree(root):
 class Game:
     def __init__(self):
         self._reset()
-        self._width, self._height = 800, 800
+        self._width, self._height = 1024, 1024
+        test_tree(self._tree.getRoot())
         
     def _reset(self):
         self._lastChanged = None
         self._tree = Tree()
         self._squares = None
+        self._fileName = "test.tree"
         
     def run(self):
         self._init_screen()
-        test_tree(self._tree.getRoot())
         self._tree_to_squares()
         # self._tree_to_render_tree()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN: self.handle_click_at(pygame.mouse.get_pos())
+                if event.type == pygame.MOUSEBUTTONDOWN: self.handle_click_at(pygame.mouse.get_pos(), event.button)
                 if event.type == pygame.KEYDOWN: self.handle_key(event.key)
             self._update_display()
             
@@ -75,15 +75,26 @@ class Game:
                     _get_squares_for_node(subNodes[2], x, y + hheight, hwidth, hheight) +
                     _get_squares_for_node(subNodes[3], x + hwidth, y + hheight, hwidth, hheight))
             else:
-                return [[x, y, width,height]]
+                return [[x, y, width, height]]
         self._squares = _get_squares_for_node(self._tree.getRoot(), 0, 0, self._width, self._height)
         
     def _update_display(self):        
         self._screen.fill(white)
         # render squares from tree
         for square in self._squares:
-            pygame.draw.rect(self._screen, black, square, 2)
+            pygame.draw.rect(self._screen, black, square, 1)
         pygame.display.flip()
+        
+    def load_file(self, filename):
+        self._lastChanged = None
+        self._fileName = filename
+        with open(filename) as fp:
+            self._tree = pickle.load(fp)
+        self._tree_to_squares()
+        
+    def save_file(self):
+        with open(self._fileName,"w") as fp:
+            pickle.dump(self._tree, fp)
     
     def handle_key(self, key):
         """Handle keypresses"""
@@ -95,19 +106,15 @@ class Game:
             self._reset()
             self._tree_to_squares()
         if chr(key) == 's':
-            with open("test.tree","w") as fp:
-                pickle.dump(self._tree, fp)
+            self.save_file()
         if chr(key) == 'l':
-            self._lastChanged = None
-            with open("test.tree") as fp:
-                self._tree = pickle.load(fp)
-            self._tree_to_squares()
+            self.load_file("test.tree")
         if chr(key) == 'u' and self._lastChanged:
             self._lastChanged.clearSubNodes()
             self._tree_to_squares()
             self._lastChanged = None
         
-    def handle_click_at(self, pos):
+    def handle_click_at(self, pos, button):
         """Given a click at an x,y tuple (pos) it should subdivide the node it landed on"""
         x,y = pos
         node = None
@@ -137,13 +144,16 @@ class Game:
                     print "Using 4th sn"
                     sy += h
                     newNode = node.subNodes()[3]
-        newNode.subDivide()
-        self._lastChanged = newNode
-        self._tree_to_squares()
-    
-    # def mouse_func(self):
-    #     use boundaries to find square that got clicked
-    #     subdivide the square (update tree and squares tree)
+        if button == 1:
+            newNode.subDivide()
+            self._lastChanged = newNode
+            self._tree_to_squares()
+        if button == 2:
+            node.clearSubNodes()
+            self._tree_to_squares()
         
 if __name__ == '__main__':
-    Game().run()
+    g = Game()
+    if len(sys.argv) > 1:
+        g.load_file(sys.argv[1])
+    g.run()
