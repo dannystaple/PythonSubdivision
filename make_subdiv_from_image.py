@@ -18,7 +18,7 @@ def convert_region(region, threshold):
     if width > 1 and height > 1:
         a, b = region.getextrema()
         print repr(a), repr(b)
-        if abs(a - b) > threshold:
+        if abs(a - b) >= threshold:
             #subdivide and convert each - using region.crop
             hwidth = width / 2
             hheight = height / 2
@@ -38,7 +38,7 @@ def convert_image(image_data, threshold):
 def main():
     image_filename, subdiv_output_filename = sys.argv[1:]
     #Greyscale differences of less than 20 will be ignored
-    threshold = 20
+    threshold = 2
     #Note - we use intensity - so convert to greyscale first.
     image_data = Image.open(image_filename).convert("L")
     subdiv_data = convert_image(image_data, threshold)
