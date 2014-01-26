@@ -20,7 +20,7 @@ def test_tree():
 class Game:
     _tree = []
     _lastChanged = None
-    _squares = None
+    _lines = None
     _file_name = None
     _screen = None
 
@@ -32,16 +32,16 @@ class Game:
     def _reset(self):
         self._lastChanged = None
         self._tree = []
-        self._squares = None
+        self._lines = None
         self._file_name = "test.tree"
 
     def run(self):
         self._init_screen()
-        self._tree_to_squares()
-        # self._tree_to_render_tree()
+        self._tree_to_lines()
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: sys.exit()
+                if event.type == pygame.QUIT:
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.handle_click_at(pygame.mouse.get_pos(), event.button)
                 if event.type == pygame.KEYDOWN:
@@ -55,28 +55,28 @@ class Game:
         self._screen = pygame.display.set_mode(size)
         pygame.display.set_caption("Subdivision toy")
 
-    def _tree_to_squares(self):
-        """Convert a tree of nodes to squares.
+    def _tree_to_lines(self):
+        """Convert a tree of nodes to lines.
         Each node will result in 4 subdivisions."""
 
-        def _get_squares_for_node(sub_nodes, x, y, width, height):
+        def _get_lines_for_node(sub_nodes, x, y, width, height):
             hwidth = width / 2
             hheight = height / 2
             if hwidth >= 1 and hheight >= 1 and sub_nodes:
-                return (_get_squares_for_node(sub_nodes[0], x, y, hwidth, hheight) +
-                        _get_squares_for_node(sub_nodes[1], x + hwidth, y, hwidth, hheight) +
-                        _get_squares_for_node(sub_nodes[2], x, y + hheight, hwidth, hheight) +
-                        _get_squares_for_node(sub_nodes[3], x + hwidth, y + hheight, hwidth, hheight))
+                return (_get_lines_for_node(sub_nodes[0], x, y, hwidth, hheight) +
+                        _get_lines_for_node(sub_nodes[1], x + hwidth, y, hwidth, hheight) +
+                        _get_lines_for_node(sub_nodes[2], x, y + hheight, hwidth, hheight) +
+                        _get_lines_for_node(sub_nodes[3], x + hwidth, y + hheight, hwidth, hheight))
             else:
-                return [[x, y, width, height]]
+                return [[x, y, x+width, y], [x, y, x, y+height]]
 
-        self._squares = _get_squares_for_node(self._tree, 0, 0, self._width, self._height)
+        self._lines = _get_lines_for_node(self._tree, 0, 0, self._width, self._height)
 
     def _update_display(self):
         self._screen.fill(white)
-        # render squares from tree
-        for square in self._squares:
-            pygame.draw.rect(self._screen, black, square, 1)
+        # render lines from tree
+        for line in self._lines:
+            pygame.draw.line(self._screen, black, line[:2], line[2:], 1)
         pygame.display.flip()
 
     def load_file(self, filename):
@@ -84,7 +84,7 @@ class Game:
         self._file_name = filename
         with open(filename) as fp:
             self._tree = pickle.load(fp)
-        self._tree_to_squares()
+        self._tree_to_lines()
         print "Loaded file %s" % self._file_name
 
     def save_file(self):
@@ -100,14 +100,14 @@ class Game:
             sys.exit()
         if chr(key) == 'c':
             self._reset()
-            self._tree_to_squares()
+            self._tree_to_lines()
         if chr(key) == 's':
             self.save_file()
         if chr(key) == 'l':
             self.load_file("test.tree")
         if chr(key) == 'u' and self._lastChanged:
             self._lastChanged.clearSubNodes()
-            self._tree_to_squares()
+            self._tree_to_lines()
             self._lastChanged = None
 
     def handle_click_at(self, pos, button):
@@ -143,10 +143,10 @@ class Game:
         if button == 1:
             new_node.extend(subdivide())
             self._lastChanged = new_node
-            self._tree_to_squares()
-        if button == 3:
+            self._tree_to_lines()
+        if button == 3 and node != self._tree:
             node[:] = []
-            self._tree_to_squares()
+            self._tree_to_lines()
 
 
 if __name__ == '__main__':
