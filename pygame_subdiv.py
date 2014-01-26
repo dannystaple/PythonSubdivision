@@ -27,7 +27,7 @@ class Game:
 
     def __init__(self):
         self._reset()
-        self._width, self._height = 768, 768
+        self._width, self._height = 640, 640
         self._tree = test_tree()
         self._file_name = "test.tree"
 
