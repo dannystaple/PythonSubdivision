@@ -1,4 +1,5 @@
 import sys, pygame, pickle
+import time
 
 black = 0, 0, 0
 white = 0xff, 0xff, 0xff
@@ -36,7 +37,7 @@ def test_tree(root):
 class Game:
     def __init__(self):
         self._reset()
-        self._width, self._height = 1024, 1024
+        self._width, self._height = 768, 768
         test_tree(self._tree.getRoot())
         
     def _reset(self):
@@ -55,6 +56,7 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN: self.handle_click_at(pygame.mouse.get_pos(), event.button)
                 if event.type == pygame.KEYDOWN: self.handle_key(event.key)
             self._update_display()
+            time.sleep(0.1)
             
     def _init_screen(self):
         pygame.init()
@@ -91,8 +93,10 @@ class Game:
         with open(filename) as fp:
             self._tree = pickle.load(fp)
         self._tree_to_squares()
+        print "Loaded file %s" % self._fileName
         
     def save_file(self):
+        print "Writing file %s" % self._fileName
         with open(self._fileName,"w") as fp:
             pickle.dump(self._tree, fp)
     
