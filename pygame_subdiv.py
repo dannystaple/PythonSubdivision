@@ -1,4 +1,5 @@
-import sys, pygame, pickle
+import json
+import sys, pygame
 import time
 
 black = 0, 0, 0
@@ -28,12 +29,12 @@ class Game:
         self._reset()
         self._width, self._height = 768, 768
         self._tree = test_tree()
+        self._file_name = "test.tree"
 
     def _reset(self):
         self._lastChanged = None
         self._tree = []
         self._lines = None
-        self._file_name = "test.tree"
 
     def run(self):
         self._init_screen()
@@ -83,14 +84,14 @@ class Game:
         self._lastChanged = None
         self._file_name = filename
         with open(filename) as fp:
-            self._tree = pickle.load(fp)
+            self._tree = json.load(fp)
         self._tree_to_lines()
         print "Loaded file %s" % self._file_name
 
     def save_file(self):
         print "Writing file %s" % self._file_name
         with open(self._file_name, "w") as fp:
-            pickle.dump(self._tree, fp)
+            json.dump(self._tree, fp)
 
     def handle_key(self, key):
         """Handle keypresses"""
@@ -104,7 +105,7 @@ class Game:
         if chr(key) == 's':
             self.save_file()
         if chr(key) == 'l':
-            self.load_file("test.tree")
+            self.load_file(self._file_name)
         if chr(key) == 'u' and self._lastChanged:
             self._lastChanged.clearSubNodes()
             self._tree_to_lines()
