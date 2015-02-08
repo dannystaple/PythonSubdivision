@@ -1,5 +1,6 @@
 import pygame_subdiv
 
+
 def test_try_nodes():
     g = pygame_subdiv.Game()
     g._tree = pygame_subdiv.Tree()
