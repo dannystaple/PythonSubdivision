@@ -9,3 +9,5 @@ before_install:
 install: "pip install -r tests/test_requirements.txt"
 # command to run tests
 script: py.test tests/*.py
+virtualenv:
+    system_site_packages: true
