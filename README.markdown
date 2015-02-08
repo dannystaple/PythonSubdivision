@@ -1,6 +1,8 @@
 Subdivision Toy
 ===============
 
+![Build Status](https://travis-ci.org/dannystaple/PythonSubdivision.svg?branch=master)
+
 A little subdivision toy using python. By clicking on a square, you can subdivide it. By subdividing many, you can create pictures (no this is not trying to compete with a real painting package).
 
 I just happen to like the way these look, and think that interesting things can be done with it - like render out the tree as a tree too, and compare them, use subdivision to analyse an image (ooh look, computer vision stuff). Right now - it just creates these images.
