@@ -17,7 +17,7 @@ def convert_region(region, threshold):
     width, height = region.size
     if width > 1 and height > 1:
         a, b = region.getextrema()
-        print repr(a), repr(b)
+        print(repr(a), repr(b))
         if abs(a - b) >= threshold:
             #subdivide and convert each - using region.crop
             hwidth = width / 2
