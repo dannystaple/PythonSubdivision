@@ -6,7 +6,6 @@ continue subdividing while regions contain more than one intensity.
 """
 import json
 import sys
-from PIL import Image
 
 
 def convert_region(region, threshold):
@@ -40,6 +39,7 @@ def main():
     #Greyscale differences of less than 20 will be ignored
     threshold = 2
     #Note - we use intensity - so convert to greyscale first.
+    from PIL import Image
     image_data = Image.open(image_filename).convert("L")
     subdiv_data = convert_image(image_data, threshold)
     with open(subdiv_output_filename, "w") as fd:
