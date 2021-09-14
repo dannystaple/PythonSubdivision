@@ -85,9 +85,10 @@ class Game:
         self._file_name = filename
         with open(filename) as fp:
             self._tree = json.load(fp)
-        self._tree_to_lines()
         print "Loaded file %s" % self._file_name
-
+        self._tree_to_lines()
+        print "Converted to tree"
+        
     def save_file(self):
         print "Writing file %s" % self._file_name
         with open(self._file_name, "w") as fp:
