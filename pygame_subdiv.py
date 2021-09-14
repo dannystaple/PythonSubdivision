@@ -85,19 +85,19 @@ class Game:
         self._file_name = filename
         with open(filename) as fp:
             self._tree = json.load(fp)
-        print "Loaded file %s" % self._file_name
+        print("Loaded file %s" % self._file_name)
         self._tree_to_lines()
-        print "Converted to tree"
-        
+        print("Converted to tree")
+
     def save_file(self):
-        print "Writing file %s" % self._file_name
+        print("Writing file %s" % self._file_name)
         with open(self._file_name, "w") as fp:
             json.dump(self._tree, fp)
 
     def handle_key(self, key):
         """Handle keypresses"""
         key &= 0xff
-        print "Handling key '" + chr(key) + "'"
+        print("Handling key '" + chr(key) + "'")
         if chr(key) == 'q':
             sys.exit()
         if chr(key) == 'c':
@@ -127,19 +127,19 @@ class Game:
             h /= 2
             if x < (sx + w):
                 if y < (sy + h):
-                    print "Using first sn"
+                    print("Using first sn")
                     new_node = node[0]
                 else:
-                    print "Using 3rd sn"
+                    print("Using 3rd sn")
                     sy += h
                     new_node = node[2]
             else:
                 sx += w
                 if y < (sy + h):
-                    print "Using 2nd sn"
+                    print("Using 2nd sn")
                     new_node = node[1]
                 else:
-                    print "Using 4th sn"
+                    print("Using 4th sn")
                     sy += h
                     new_node = node[3]
         if button == 1:

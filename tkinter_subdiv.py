@@ -5,14 +5,14 @@ from subdiv_document import SubdivDocument
 class SubdivTkapp(tk.Frame):
     """Subdiv toy tk application"""
     def load(self):
-        print "Loading"
+        print("Loading")
 
     def save(self):
-        print "Saving"
+        print("Saving")
 
     def new_doc(self):
-        print "Making new doc"
-        
+        print("Making new doc")
+
     def makeMenu(self):
         #Menu with: New, Load, Save
         #New -> Clear
@@ -38,7 +38,7 @@ class SubdivTkapp(tk.Frame):
         self.canvas.pack()
         w, h = 400, 400
         hh = h / 2
-        print w, h
+        print(w, h)
         self.l1 = self.canvas.create_line(0, hh, w, hh)
 
     def __init__(self, master=None):

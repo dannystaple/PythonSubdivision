@@ -76,19 +76,19 @@ class SubdivDocument(object):
             h /= 2
             if x < (sx + w):
                 if y < (sy + h):
-                    print "Using first sn"
+                    print("Using first sn")
                     node = parent_node[0]
                 else:
-                    print "Using 3rd sn"
+                    print("Using 3rd sn")
                     sy += h
                     node = parent_node[2]
             else:
                 sx += w
                 if y < (sy + h):
-                    print "Using 2nd sn"
+                    print("Using 2nd sn")
                     node = parent_node[1]
                 else:
-                    print "Using 4th sn"
+                    print("Using 4th sn")
                     sy += h
                     node = parent_node[3]
         return parent_node, node
